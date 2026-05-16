@@ -39,20 +39,25 @@ public class SqlRenderer
         return $"{RenderJoinType(join.Type)} {RenderTable(join.Table)} ON {RenderCondition(join.Condition)}";
     }
 
-    private string RenderCondition(ICondition condition)
-    {
-        return condition switch
-        {
-            EqualsCondition eq => RenderEquals(eq),
-            _ => throw new NotSupportedException()
-        };
-    }
-
     private string RenderJoinType(JoinType joinType)
     {
         return joinType switch
         {
             JoinType.Inner => "INNER JOIN",
+            JoinType.LeftOuter => "LEFT OUTER JOIN",
+            JoinType.RightOuter => "RIGHT OUTER JOIN",
+            JoinType.FullOuter => "FULL OUTER JOIN",
+            _ => throw new NotSupportedException()
+        };
+    }
+
+    private string RenderCondition(ICondition condition)
+    {
+        return condition switch
+        {
+            EqualsCondition eq => RenderEquals(eq),
+            AndCondition eq => RenderAnd(eq),
+            OrCondition eq => RenderOr(eq),
             _ => throw new NotSupportedException()
         };
     }
@@ -60,5 +65,21 @@ public class SqlRenderer
     private string RenderEquals(EqualsCondition condition)
     {
         return $"{RenderColumn(condition.Left)} = {RenderColumn(condition.Right)}";
+    }
+
+    private string RenderAnd(AndCondition condition)
+    {
+        var left = RenderCondition(condition.Left);
+        var right = RenderCondition(condition.Right);
+
+        return $"({left} AND {right})";
+    }
+
+    private string RenderOr(OrCondition condition)
+    {
+        var left = RenderCondition(condition.Left);
+        var right = RenderCondition(condition.Right);
+
+        return $"({left} OR {right})";
     }
 }
