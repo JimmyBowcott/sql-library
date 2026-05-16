@@ -4,18 +4,18 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Tests;
 
-public class SelectQueryTests
+public class SelectTests
 {
     [Fact]
     public void RendersSelectQuery()
     {
         var eventsTable = new Table("Events");
-        var idColumn = new Column(
+        var eventId = new Column(
             eventsTable,
             "Id");
 
         var query = new SelectQuery(
-            new[] { idColumn },
+            new[] { eventId },
             eventsTable);
 
         var renderer = new SqlRenderer();
@@ -33,11 +33,11 @@ public class SelectQueryTests
     public void RendersMultipleColumns()
     {
         var eventsTable = new Table("Events");
-        var idColumn = new Column(eventsTable, "Id");
-        var nameColumn = new Column(eventsTable, "Name");
+        var eventId = new Column(eventsTable, "Id");
+        var eventName = new Column(eventsTable, "Name");
 
         var query = new SelectQuery(
-            new[] { idColumn, nameColumn },
+            new[] { eventId, eventName },
             eventsTable);
 
         var renderer = new SqlRenderer();
@@ -55,10 +55,10 @@ public class SelectQueryTests
     public void RendersTableAlias()
     {
         var eventsTable = new Table("Events", "e");
-        var idColumn = new Column(eventsTable, "Id");
+        var eventId = new Column(eventsTable, "Id");
 
         var query = new SelectQuery(
-            new[] { idColumn },
+            new[] { eventId },
             eventsTable);
 
         var renderer = new SqlRenderer();
