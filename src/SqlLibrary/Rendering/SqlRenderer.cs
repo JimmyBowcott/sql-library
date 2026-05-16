@@ -55,16 +55,26 @@ public class SqlRenderer
     {
         return condition switch
         {
-            EqualsCondition eq => RenderEquals(eq),
+            ComparisonCondition eq => RenderComparison(eq),
             AndCondition eq => RenderAnd(eq),
             OrCondition eq => RenderOr(eq),
             _ => throw new NotSupportedException()
         };
     }
 
-    private string RenderEquals(EqualsCondition condition)
+    private string RenderComparison(ComparisonCondition condition)
     {
-        return $"{RenderColumn(condition.Left)} = {RenderColumn(condition.Right)}";
+        string op = condition.Op switch
+        {
+            ComparisonOperator.Equal => "=",
+            ComparisonOperator.GreaterThan => ">",
+            ComparisonOperator.GreaterThanOrEqual => ">=",
+            ComparisonOperator.LessThan => "<",
+            ComparisonOperator.LessThanOrEqual => "<=",
+            _ => throw new NotSupportedException()
+        };
+
+        return $"{RenderColumn(condition.Left)} {op} {RenderColumn(condition.Right)}";
     }
 
     private string RenderAnd(AndCondition condition)

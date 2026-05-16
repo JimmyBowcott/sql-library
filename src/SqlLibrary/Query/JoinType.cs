@@ -1,3 +1,5 @@
+namespace SqlLibrary.Query;
+
 public enum JoinType
 {
     Inner,

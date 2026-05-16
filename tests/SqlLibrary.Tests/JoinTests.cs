@@ -24,7 +24,11 @@ public class JoinTests
             new Join(
                 JoinType.Inner,
                 eventAttendee,
-                new EqualsCondition(eventId, eventAttendeeEventId)
+                new ComparisonCondition(
+                    eventId, 
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                    )
             )
         );
 
@@ -49,13 +53,21 @@ public class JoinTests
         var eventId = new Column(events, "Id");
         var attendeeEventId = new Column(attendees, "EventId");
 
-        var ownerId = new Column(events, "OwnerId");
-        var attendeeOwnerId = new Column(attendees, "OwnerId");
+        var eventTheme = new Column(events, "Theme");
+        var attendeeTheme = new Column(attendees, "FavouriteTheme");
 
         var condition =
             new AndCondition(
-                new EqualsCondition(eventId, attendeeEventId),
-                new EqualsCondition(ownerId, attendeeOwnerId)
+                new ComparisonCondition(
+                    eventId,
+                    attendeeEventId,
+                    ComparisonOperator.Equal
+                    ),
+                new ComparisonCondition(
+                    eventTheme,
+                    attendeeTheme,
+                    ComparisonOperator.Equal
+                    )
             );
 
         var query = new SelectQuery(
@@ -77,7 +89,7 @@ public class JoinTests
             """
             SELECT e.Id
             FROM Events e
-            INNER JOIN Attendees a ON (e.Id = a.EventId AND e.OwnerId = a.OwnerId)
+            INNER JOIN Attendees a ON (e.Id = a.EventId AND e.Theme = a.FavouriteTheme)
             """,
             sql);
     }
@@ -91,13 +103,21 @@ public class JoinTests
         var eventId = new Column(events, "Id");
         var attendeeEventId = new Column(attendees, "EventId");
 
-        var ownerId = new Column(events, "OwnerId");
-        var attendeeOwnerId = new Column(attendees, "OwnerId");
+        var eventTheme = new Column(events, "Theme");
+        var attendeeTheme = new Column(attendees, "FavouriteTheme");
 
         var condition =
             new OrCondition(
-                new EqualsCondition(eventId, attendeeEventId),
-                new EqualsCondition(ownerId, attendeeOwnerId)
+                new ComparisonCondition(
+                    eventId,
+                    attendeeEventId,
+                    ComparisonOperator.Equal
+                    ),
+                new ComparisonCondition(
+                    eventTheme,
+                    attendeeTheme,
+                    ComparisonOperator.Equal
+                    )
             );
 
         var query = new SelectQuery(
@@ -119,7 +139,171 @@ public class JoinTests
             """
             SELECT e.Id
             FROM Events e
-            INNER JOIN Attendees a ON (e.Id = a.EventId OR e.OwnerId = a.OwnerId)
+            INNER JOIN Attendees a ON (e.Id = a.EventId OR e.Theme = a.FavouriteTheme)
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersGreaterThanCondition()
+    {
+        var events = new Table("Events", "e");
+        var attendees = new Table("Attendees", "a");
+
+        var eventHighScore = new Column(events, "HighScore");
+        var attendeeScore = new Column(attendees, "Score");
+
+        var condition =
+            new ComparisonCondition(
+                attendeeScore,
+                eventHighScore,
+                ComparisonOperator.GreaterThan
+            );
+
+        var query = new SelectQuery(
+            new[] { eventHighScore },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                condition
+            )
+        );
+
+        var renderer = new SqlRenderer();
+
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.HighScore
+            FROM Events e
+            INNER JOIN Attendees a ON a.Score > e.HighScore
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersGreaterThanOrEqualsCondition()
+    {
+        var events = new Table("Events", "e");
+        var attendees = new Table("Attendees", "a");
+
+        var eventHighScore = new Column(events, "HighScore");
+        var attendeeScore = new Column(attendees, "Score");
+
+        var condition =
+            new ComparisonCondition(
+                attendeeScore,
+                eventHighScore,
+                ComparisonOperator.GreaterThanOrEqual
+            );
+
+        var query = new SelectQuery(
+            new[] { eventHighScore },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                condition
+            )
+        );
+
+        var renderer = new SqlRenderer();
+
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.HighScore
+            FROM Events e
+            INNER JOIN Attendees a ON a.Score >= e.HighScore
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersLessThanCondition()
+    {
+        var events = new Table("Events", "e");
+        var attendees = new Table("Attendees", "a");
+
+        var eventHighScore = new Column(events, "HighScore");
+        var attendeeScore = new Column(attendees, "Score");
+
+        var condition =
+            new ComparisonCondition(
+                attendeeScore,
+                eventHighScore,
+                ComparisonOperator.LessThan
+            );
+
+        var query = new SelectQuery(
+            new[] { eventHighScore },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                condition
+            )
+        );
+
+        var renderer = new SqlRenderer();
+
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.HighScore
+            FROM Events e
+            INNER JOIN Attendees a ON a.Score < e.HighScore
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersLessThanOrEqualsCondition()
+    {
+        var events = new Table("Events", "e");
+        var attendees = new Table("Attendees", "a");
+
+        var eventHighScore = new Column(events, "HighScore");
+        var attendeeScore = new Column(attendees, "Score");
+
+        var condition =
+            new ComparisonCondition(
+                attendeeScore,
+                eventHighScore,
+                ComparisonOperator.LessThanOrEqual
+            );
+
+        var query = new SelectQuery(
+            new[] { eventHighScore },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                condition
+            )
+        );
+
+        var renderer = new SqlRenderer();
+
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.HighScore
+            FROM Events e
+            INNER JOIN Attendees a ON a.Score <= e.HighScore
             """,
             sql);
     }
