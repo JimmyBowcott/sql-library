@@ -8,7 +8,7 @@ public class SqlRenderer
     public string Render(SelectQuery query)
     {
         var columns = string.Join(", ", query.Columns.Select(RenderColumn));
-        var joins = string.Join(", ", query.Joins.Select(RenderJoin));
+        var joins = string.Join("\n", query.Joins.Select(RenderJoin));
 
         return
             $"""

@@ -25,7 +25,7 @@ public class JoinTests
                 JoinType.Inner,
                 eventAttendee,
                 new ComparisonCondition(
-                    eventId, 
+                    eventId,
                     eventAttendeeEventId,
                     ComparisonOperator.Equal
                     )
@@ -304,6 +304,59 @@ public class JoinTests
             SELECT e.HighScore
             FROM Events e
             INNER JOIN Attendees a ON a.Score <= e.HighScore
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersMultipleJoins()
+    {
+        var events = new Table("Events", "e");
+        var eventAttendee = new Table("EventAttendee", "ea");
+        var attendees = new Table("Attendees", "a");
+
+        var eventId = new Column(events, "Id");
+        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
+        var eventAttendeeAttendeeId = new Column(eventAttendee, "AttendeeId");
+        var attendeeId = new Column(attendees, "Id");
+
+        var query = new SelectQuery(
+            new[] { eventId },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                eventAttendee,
+                new ComparisonCondition(
+                    eventId,
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                )
+            )
+        );
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                new ComparisonCondition(
+                    eventAttendeeAttendeeId,
+                    attendeeId,
+                    ComparisonOperator.Equal
+                )
+            )
+        );
+
+        var renderer = new SqlRenderer();
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.Id
+            FROM Events e
+            INNER JOIN EventAttendee ea ON e.Id = ea.EventId
+            INNER JOIN Attendees a ON ea.AttendeeId = a.Id
             """,
             sql);
     }
