@@ -7,7 +7,7 @@ namespace SqlLibrary.Tests;
 public class JoinTests
 {
     [Fact]
-    public void RendersSingleInnerJoin()
+    public void RendersInnerJoin()
     {
         var events = new Table("Events", "e");
         var eventAttendee = new Table("EventAttendee", "ea");
@@ -40,6 +40,173 @@ public class JoinTests
             SELECT e.Id, ea.Name
             FROM Events e
             INNER JOIN EventAttendee ea ON e.Id = ea.EventId
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersLeftOuterJoin()
+    {
+        var events = new Table("Events", "e");
+        var eventAttendee = new Table("EventAttendee", "ea");
+
+        var eventId = new Column(events, "Id");
+        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
+        var eventAttendeeName = new Column(eventAttendee, "Name");
+
+        var query = new SelectQuery(
+            new[] { eventId, eventAttendeeName },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.LeftOuter,
+                eventAttendee,
+                new ComparisonCondition(
+                    eventId,
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                    )
+            )
+        );
+
+        var renderer = new SqlRenderer();
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.Id, ea.Name
+            FROM Events e
+            LEFT OUTER JOIN EventAttendee ea ON e.Id = ea.EventId
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersRightOuterJoin()
+    {
+        var events = new Table("Events", "e");
+        var eventAttendee = new Table("EventAttendee", "ea");
+
+        var eventId = new Column(events, "Id");
+        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
+        var eventAttendeeName = new Column(eventAttendee, "Name");
+
+        var query = new SelectQuery(
+            new[] { eventId, eventAttendeeName },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.RightOuter,
+                eventAttendee,
+                new ComparisonCondition(
+                    eventId,
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                    )
+            )
+        );
+
+        var renderer = new SqlRenderer();
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.Id, ea.Name
+            FROM Events e
+            RIGHT OUTER JOIN EventAttendee ea ON e.Id = ea.EventId
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersFullOuterJoin()
+    {
+        var events = new Table("Events", "e");
+        var eventAttendee = new Table("EventAttendee", "ea");
+
+        var eventId = new Column(events, "Id");
+        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
+        var eventAttendeeName = new Column(eventAttendee, "Name");
+
+        var query = new SelectQuery(
+            new[] { eventId, eventAttendeeName },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.FullOuter,
+                eventAttendee,
+                new ComparisonCondition(
+                    eventId,
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                    )
+            )
+        );
+
+        var renderer = new SqlRenderer();
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.Id, ea.Name
+            FROM Events e
+            FULL OUTER JOIN EventAttendee ea ON e.Id = ea.EventId
+            """,
+            sql);
+    }
+
+    [Fact]
+    public void RendersMultipleJoins()
+    {
+        var events = new Table("Events", "e");
+        var eventAttendee = new Table("EventAttendee", "ea");
+        var attendees = new Table("Attendees", "a");
+
+        var eventId = new Column(events, "Id");
+        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
+        var eventAttendeeAttendeeId = new Column(eventAttendee, "AttendeeId");
+        var attendeeId = new Column(attendees, "Id");
+
+        var query = new SelectQuery(
+            new[] { eventId },
+            events);
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                eventAttendee,
+                new ComparisonCondition(
+                    eventId,
+                    eventAttendeeEventId,
+                    ComparisonOperator.Equal
+                )
+            )
+        );
+
+        query.AddJoin(
+            new Join(
+                JoinType.Inner,
+                attendees,
+                new ComparisonCondition(
+                    eventAttendeeAttendeeId,
+                    attendeeId,
+                    ComparisonOperator.Equal
+                )
+            )
+        );
+
+        var renderer = new SqlRenderer();
+        var sql = renderer.Render(query);
+
+        Assert.Equal(
+            """
+            SELECT e.Id
+            FROM Events e
+            INNER JOIN EventAttendee ea ON e.Id = ea.EventId
+            INNER JOIN Attendees a ON ea.AttendeeId = a.Id
             """,
             sql);
     }
@@ -304,59 +471,6 @@ public class JoinTests
             SELECT e.HighScore
             FROM Events e
             INNER JOIN Attendees a ON a.Score <= e.HighScore
-            """,
-            sql);
-    }
-
-    [Fact]
-    public void RendersMultipleJoins()
-    {
-        var events = new Table("Events", "e");
-        var eventAttendee = new Table("EventAttendee", "ea");
-        var attendees = new Table("Attendees", "a");
-
-        var eventId = new Column(events, "Id");
-        var eventAttendeeEventId = new Column(eventAttendee, "EventId");
-        var eventAttendeeAttendeeId = new Column(eventAttendee, "AttendeeId");
-        var attendeeId = new Column(attendees, "Id");
-
-        var query = new SelectQuery(
-            new[] { eventId },
-            events);
-
-        query.AddJoin(
-            new Join(
-                JoinType.Inner,
-                eventAttendee,
-                new ComparisonCondition(
-                    eventId,
-                    eventAttendeeEventId,
-                    ComparisonOperator.Equal
-                )
-            )
-        );
-
-        query.AddJoin(
-            new Join(
-                JoinType.Inner,
-                attendees,
-                new ComparisonCondition(
-                    eventAttendeeAttendeeId,
-                    attendeeId,
-                    ComparisonOperator.Equal
-                )
-            )
-        );
-
-        var renderer = new SqlRenderer();
-        var sql = renderer.Render(query);
-
-        Assert.Equal(
-            """
-            SELECT e.Id
-            FROM Events e
-            INNER JOIN EventAttendee ea ON e.Id = ea.EventId
-            INNER JOIN Attendees a ON ea.AttendeeId = a.Id
             """,
             sql);
     }
