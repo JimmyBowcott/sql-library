@@ -2,6 +2,9 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Query;
 
+/// <summary>
+/// Represents a logical AND operation between two conditions.
+/// </summary>
 public class AndCondition : ICondition
 {
     public ICondition Left { get; }

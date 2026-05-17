@@ -1,5 +1,8 @@
 namespace SqlLibrary.Schema;
 
+/// <summary>
+/// Represents a string, boolean or integer.
+/// </summary>
 public class Literal : IValue
 {
     public object Value { get; }

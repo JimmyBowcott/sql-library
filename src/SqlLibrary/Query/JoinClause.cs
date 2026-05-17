@@ -2,6 +2,9 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Query;
 
+/// <summary>
+/// Represents a JOIN operation with a target table and condition.
+/// </summary>
 public class JoinClause
 {
     public JoinType Type { get; }

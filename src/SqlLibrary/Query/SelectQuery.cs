@@ -2,6 +2,9 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Query;
 
+/// <summary>
+/// Represents a SELECT query, supporting joins and conditions.
+/// </summary>
 public class SelectQuery
 {
     public IReadOnlyList<Column> Columns { get; }
@@ -15,11 +18,17 @@ public class SelectQuery
         From = from;
     }
 
+    /// <summary>
+    /// Perform a JOIN operation with a table.
+    /// </summary>
     public void Join(JoinClause join)
     {
         Joins.Add(join);
     }
 
+    /// <summary>
+    /// Apply a WHERE clause to the statement.
+    /// </summary>
     public void Where(ICondition condition)
     {
         WhereClause = condition;

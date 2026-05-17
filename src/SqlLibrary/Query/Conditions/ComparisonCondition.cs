@@ -2,6 +2,9 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Query;
 
+/// <summary>
+/// Represents a comparison between two values (e.g. a column reference and a string literal)
+/// </summary>
 public class ComparisonCondition : ICondition
 {
     public Column Left { get; }

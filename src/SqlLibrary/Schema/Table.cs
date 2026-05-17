@@ -1,5 +1,8 @@
 namespace SqlLibrary.Schema;
 
+/// <summary>
+/// Representation of a SQL table.
+/// </summary>
 public class Table
 {
     public string Name { get; }

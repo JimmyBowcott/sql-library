@@ -3,8 +3,14 @@ using SqlLibrary.Schema;
 
 namespace SqlLibrary.Rendering;
 
+/// <summary>
+/// Renders a query AST into valid T-SQL.
+/// </summary>
 public class SqlRenderer
 {
+    /// <summary>
+    /// Converts a SelectQuery AST into a SQL string. 
+    /// </summary>
     public string Render(SelectQuery query)
     {
         var columns = string.Join(", ", query.Columns.Select(RenderColumn));
