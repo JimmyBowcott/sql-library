@@ -1,6 +1,6 @@
 namespace SqlLibrary.Schema;
 
-public class Column
+public class Column : IValue
 {
     public Table Table { get; }
     public string Name { get; }

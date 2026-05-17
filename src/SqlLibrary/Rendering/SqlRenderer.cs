@@ -62,6 +62,27 @@ public class SqlRenderer
         };
     }
 
+    private string RenderValue(IValue value)
+    {
+        return value switch
+        {
+            Column column => RenderColumn(column),
+            Literal literal => RenderLiteral(literal),
+            _ => throw new NotSupportedException()
+        };
+    }
+
+    private string RenderLiteral(Literal literal)
+    {
+        return literal.Value switch
+        {
+            string s => $"'{s}'",
+            bool b => b ? "1" : "0",
+            int i => i.ToString(),
+            _ => throw new NotSupportedException()
+        };
+    }
+
     private string RenderCondition(ICondition condition)
     {
         return condition switch
@@ -85,7 +106,7 @@ public class SqlRenderer
             _ => throw new NotSupportedException()
         };
 
-        return $"{RenderColumn(condition.Left)} {op} {RenderColumn(condition.Right)}";
+        return $"{RenderColumn(condition.Left)} {op} {RenderValue(condition.Right)}";
     }
 
     private string RenderAnd(AndCondition condition)
