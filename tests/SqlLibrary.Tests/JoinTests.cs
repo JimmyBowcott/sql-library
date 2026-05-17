@@ -20,8 +20,8 @@ public class JoinTests
             new[] { eventId, eventAttendeeName },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 eventAttendee,
                 new ComparisonCondition(
@@ -58,8 +58,8 @@ public class JoinTests
             new[] { eventId, eventAttendeeName },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.LeftOuter,
                 eventAttendee,
                 new ComparisonCondition(
@@ -96,8 +96,8 @@ public class JoinTests
             new[] { eventId, eventAttendeeName },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.RightOuter,
                 eventAttendee,
                 new ComparisonCondition(
@@ -134,8 +134,8 @@ public class JoinTests
             new[] { eventId, eventAttendeeName },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.FullOuter,
                 eventAttendee,
                 new ComparisonCondition(
@@ -174,8 +174,8 @@ public class JoinTests
             new[] { eventId },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 eventAttendee,
                 new ComparisonCondition(
@@ -186,8 +186,8 @@ public class JoinTests
             )
         );
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 new ComparisonCondition(
@@ -241,8 +241,8 @@ public class JoinTests
             new[] { eventId },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition
@@ -291,8 +291,8 @@ public class JoinTests
             new[] { eventId },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition
@@ -331,8 +331,8 @@ public class JoinTests
             new[] { eventHighScore },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition
@@ -372,8 +372,8 @@ public class JoinTests
             new[] { eventHighScore },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition
@@ -413,8 +413,8 @@ public class JoinTests
             new[] { eventHighScore },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition
@@ -454,8 +454,8 @@ public class JoinTests
             new[] { eventHighScore },
             events);
 
-        query.AddJoin(
-            new Join(
+        query.Join(
+            new JoinClause(
                 JoinType.Inner,
                 attendees,
                 condition

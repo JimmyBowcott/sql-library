@@ -8,14 +8,20 @@ public class SqlRenderer
     public string Render(SelectQuery query)
     {
         var columns = string.Join(", ", query.Columns.Select(RenderColumn));
-        var joins = string.Join("\n", query.Joins.Select(RenderJoin));
 
-        return
-            $"""
-            SELECT {columns}
-            FROM {RenderTable(query.From)}
-            {joins}
-            """.Trim();
+        var sections = new List<string>
+        {
+            $"SELECT {columns}",
+            $"FROM {RenderTable(query.From)}",
+        };
+
+        if (query.Joins.Any())
+            sections.Add(string.Join("\n", query.Joins.Select(RenderJoin)));
+
+        if (query.WhereClause != null)
+            sections.Add(RenderWhere(query.WhereClause));
+
+        return string.Join("\n", sections);
     }
 
     private string RenderColumn(Column column)
@@ -34,9 +40,14 @@ public class SqlRenderer
         return table.Name;
     }
 
-    private string RenderJoin(Join join)
+    private string RenderJoin(JoinClause join)
     {
         return $"{RenderJoinType(join.Type)} {RenderTable(join.Table)} ON {RenderCondition(join.Condition)}";
+    }
+
+    private string RenderWhere(ICondition condition)
+    {
+        return $"WHERE {RenderCondition(condition)}";
     }
 
     private string RenderJoinType(JoinType joinType)
